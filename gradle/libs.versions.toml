@@ -7,7 +7,7 @@ shadow = "9.2.2"
 # library
 ktoml = "0.7.1"
 kord = "0.17.0"
-lavakord = "9.1.5"
+lavakord = "9.2.0"
 
 
 [plugins]
