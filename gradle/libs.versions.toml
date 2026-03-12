@@ -6,7 +6,7 @@ shadow = "9.2.2"
 
 # library
 ktoml = "0.7.1"
-kord = "0.17.0"
+kord = "0.18.0"
 lavakord = "9.2.0"
 
 
