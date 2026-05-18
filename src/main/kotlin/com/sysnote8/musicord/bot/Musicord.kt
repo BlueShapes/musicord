@@ -28,7 +28,8 @@ class Musicord {
         private set
     lateinit var queue: MusicQueue
         private set
-    var guildId: Snowflake = Snowflake(-1)
+    lateinit var guildId: List<Snowflake>
+        private set
 
     fun loadConfig() {
         val configFile = File("config.toml")
@@ -39,7 +40,7 @@ class Musicord {
         }
 
         config = Toml.decodeFromStream<ConfigData>(configFile.inputStream())
-        guildId = Snowflake(config.discord.guildId)
+        guildId = config.discord.guildId.map { Snowflake(it) }
     }
 
     @OptIn(PrivilegedIntent::class)

@@ -30,21 +30,23 @@ object Commands {
         registerHelp()
         // register
         println("Registering slash commands")
-        bot.kord
-            .createGuildApplicationCommands(bot.guildId, {
-                cmdMap.forEach { (cmdName, v) ->
-                    println("- $cmdName")
-                    input(cmdName, v.description) {
-                        v.args(this)
+        bot.guildId.forEach { guildId ->
+            bot.kord
+                .createGuildApplicationCommands(guildId, {
+                    cmdMap.forEach { (cmdName, v) ->
+                        println("- $cmdName")
+                        input(cmdName, v.description) {
+                            v.args(this)
+                        }
+                    }
+                })
+                .collect { cmd ->
+                    val cmdData = cmdMap[cmd.data.name] ?: return@collect
+                    if (cmdData.isRootCmd()) {
+                        helpCmdMap[cmd.data.toMention()] = cmdData.description
                     }
                 }
-            })
-            .collect { cmd ->
-                val cmdData = cmdMap[cmd.data.name] ?: return@collect
-                if (cmdData.isRootCmd()) {
-                    helpCmdMap[cmd.data.toMention()] = cmdData.description
-                }
-            }
+        }
         initialized = true
     }
 

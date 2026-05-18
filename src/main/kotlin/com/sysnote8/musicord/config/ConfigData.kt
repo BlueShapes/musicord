@@ -11,7 +11,7 @@ data class ConfigData(
 @Serializable
 data class DiscordConfig(
     val token: String = "token is here",
-    val guildId: ULong = (1234567890).toULong(),
+    val guildId: List<ULong> = listOf((1234567890).toULong(), (10001111).toULong()),
 )
 
 @Serializable
