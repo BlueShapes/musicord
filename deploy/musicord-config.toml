@@ -1,0 +1,7 @@
+[discord]
+token = "<discord bot token is here>"
+guildId = [<guild id is here>]
+
+[lavalink]
+host = "ws://lavalink:2333"
+password = "youshallnotpass"

@@ -1,0 +1,58 @@
+services:
+  musicord:
+    restart: unless-stopped
+    image: ghcr.io/blueshapes/musicord:0.3.0
+    container_name: musicord
+    depends_on:
+      lavalink:
+        condition: service_healthy
+    networks:
+      - lavalink
+    volumes:
+      - ./musicord-config.toml:/app/config.toml
+  yt-cipher:
+    image: ghcr.io/kikkia/yt-cipher:master
+    container_name: yt-cipher
+    networks:
+      - lavalink
+    expose:
+      - 8001
+    environment:
+      - OVERRIDE_PLAYER_VARIANT=IAS
+    restart: unless-stopped
+  lavalink:
+    # pin the image version to Lavalink v4 and use the alpine variant for a smaller image size
+    image: ghcr.io/lavalink-devs/lavalink:4-alpine
+    container_name: lavalink
+    depends_on:
+      - yt-cipher
+    restart: unless-stopped
+    environment:
+      # set Java options here (6GB heap size)
+      - _JAVA_OPTIONS=-Xmx1024M
+      # set lavalink server port
+      # - SERVER_PORT=2333
+      # set password for lavalink
+      # - LAVALINK_SERVER_PASSWORD=youshallnotpass
+    volumes:
+      # mount application.yml from the same directory, if you want to use environment variables remove this line below
+      - ./lavalink-application.yml:/opt/Lavalink/application.yml
+      # persist plugins between restarts, make sure to create the folder & set the correct permissions and user/group id mentioned above
+      # - lavalink-plugins:/opt/Lavalink/plugins
+    networks:
+      - lavalink
+    expose:
+      # lavalink exposes port 2333 to connect to for other containers (this is for documentation purposes only)
+      - 2333
+    healthcheck:
+      test: ["CMD", "busybox", "wget", "-q", "--spider", "--header=Authorization: youshallnotpass", "http://localhost:2333/v4/stats"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+networks:
+  # create a lavalink network you can add other containers to, to give them access to Lavalink
+  lavalink:
+    name: lavalink
+volumes:
+  lavalink-plugins:
